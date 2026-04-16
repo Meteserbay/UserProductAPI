@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using urunLokasyonAPI.Dto;
 using urunLokasyonAPI.Models;
+using urunLokasyonAPI.Services;
 using UrunLokasyonAPI.Data;
 
 namespace urunLokasyonAPI.Controllers
@@ -83,47 +84,33 @@ namespace urunLokasyonAPI.Controllers
     [Route("api/kullanici")]
     public class KullaniciController : ControllerBase
     {
-        private readonly AppDbContext _context;
-
-        public KullaniciController(AppDbContext context)
+        private readonly IKullaniciService _service;
+        public KullaniciController(IKullaniciService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(_context.Kullanicilar.ToList());
+            return Ok(_service.GetAll());
         }
 
         [HttpPost]
         public IActionResult Add(Kullanici kullanici)
         {
-            _context.Kullanicilar.Add(kullanici);
-            _context.SaveChanges();
+            _service.Add(kullanici);
             return Ok(kullanici);
         }
 
         [HttpGet("{id}/urunler")]
         public IActionResult GetKullaniciUrunleri(int id)
         {
-            var kullanici = _context.Kullanicilar
-                .Include(u => u.Urunler)
-                .FirstOrDefault(x => x.Id == id);
+            var result = _service.GetKullaniciUrunleri(id);
+            if (result == null)
+                return NotFound();
 
-            return Ok(new KullaniciUrunDto
-            {
-                Id = kullanici.Id,
-                Email = kullanici.Email,
-                Name = kullanici.Name,
-                Urunler = kullanici.Urunler.Select(x => new UrunDto
-                {
-                    Id = x.Id,
-                    Barcode = x.Barcode,
-                    Name = x.Name,
-                    Location = x.Location,
-                }).ToList()
-            });
+            return Ok(result);
         }
 
     }

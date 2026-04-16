@@ -1,5 +1,6 @@
 using UrunLokasyonAPI.Data;
 using Microsoft.EntityFrameworkCore;
+using urunLokasyonAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
 opt.UseInMemoryDatabase("LokasyonDb"));
+
+builder.Services.AddScoped<IKullaniciService, KullaniciService>();
+
+builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
