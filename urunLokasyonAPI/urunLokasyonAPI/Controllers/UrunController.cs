@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using urunLokasyonAPI.Dto;
 using urunLokasyonAPI.Models;
@@ -84,6 +85,13 @@ namespace urunLokasyonAPI.Controllers
     [Route("api/kullanici")]
     public class KullaniciController : ControllerBase
     {
+        [Authorize]
+        [HttpGet("secure")]
+        public IActionResult Secure()
+        {
+            return Ok("Giriş yaptın");
+        }
+
         private readonly IKullaniciService _service;
         public KullaniciController(IKullaniciService service)
         {
