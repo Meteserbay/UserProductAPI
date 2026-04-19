@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // ===================== DB =====================
 builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseInMemoryDatabase("LokasyonDb"));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // ===================== SERVICES =====================
 builder.Services.AddScoped<IKullaniciService, KullaniciService>();
