@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using urunLokasyonAPI.Dto;
+using urunLokasyonAPI.Models;
 using urunLokasyonAPI.Services;
 using UrunLokasyonAPI.Data;
 
@@ -21,6 +22,7 @@ namespace urunLokasyonAPI.Controllers
         [HttpPost("login")]
         public IActionResult Login(LoginDto login)
         {
+            
             var kullanici = _context.Kullanicilar
                 .FirstOrDefault(x => x.Email == login.Email && x.Password == login.Password);
 

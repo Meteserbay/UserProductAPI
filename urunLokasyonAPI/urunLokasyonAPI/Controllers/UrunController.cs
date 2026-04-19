@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using urunLokasyonAPI.Dto;
 using urunLokasyonAPI.Models;
 using urunLokasyonAPI.Services;
@@ -18,6 +19,21 @@ namespace urunLokasyonAPI.Controllers
         {
             _context = context;
         }
+
+
+        [Authorize]
+        [HttpGet("my-products")]
+        public IActionResult GetMyProducts()
+        {
+            var kullaniciId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var urunler = _context.Urunler
+                .Where(x => x.KullaniciId == kullaniciId)
+                .ToList();
+
+            return Ok(urunler);
+        }
+
 
         [HttpGet]
         public IActionResult Get()
@@ -58,6 +74,9 @@ namespace urunLokasyonAPI.Controllers
             return Ok(urun);
         }
 
+
+
+
         [HttpDelete("{id}")]
         public IActionResult Delete(int id) 
         {
@@ -71,9 +90,13 @@ namespace urunLokasyonAPI.Controllers
 
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Add(Urun urun)
         {
+            var kullaniciId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            urun.KullaniciId = kullaniciId;
+
             _context.Urunler.Add(urun);
             _context.SaveChanges();
             return Ok(urun);
@@ -103,6 +126,7 @@ namespace urunLokasyonAPI.Controllers
         {
             return Ok(_service.GetAll());
         }
+
 
         [HttpPost]
         public IActionResult Add(Kullanici kullanici)
